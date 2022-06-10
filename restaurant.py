@@ -8,7 +8,7 @@ warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 # DATABASE LOGIC
 try:
-    con_string = r'DRIVER={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=C:\Users\Admin\Desktop\Restaurant Management\Restaurant.accdb;'
+    con_string = r'DRIVER={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=C:\Users\cui\Downloads\RMS-Restaurant-Management-System-master\RMS-Restaurant-Management-System-master\Restaurant.accdb;'
     conn = pyodbc.connect(con_string)
     print("connected to the data base")
 
@@ -128,12 +128,12 @@ def save():
         if url == None:
             pass
         else:
-
+            dbpush()
             bill_data = textReceipt.get(1.0, END)
             url.write(bill_data)
             url.close()
             messagebox.showinfo('Information', 'Your Bill Is Succesfully Saved')
-        dbpush()
+
 
 def receipt():
     global billnumber, date
@@ -584,12 +584,13 @@ def blackforest():
 
 def dbpush():
     cursor = conn.cursor()
+    sql = "INSERT INTO bill_data (reference_id, total_bill) VALUES (?, ?)"
+    val = (billnumber, subtotalofItems)
+    cursor.execute(sql, val)
 
-    sql = 'select * from Table1'
+    conn.commit()
 
-    cursor.execute(sql)
-    for row in cursor.fetchall():
-        print(row)
+    print(cursor.rowcount, "record inserted.")
 
 
 root = Tk()
@@ -997,7 +998,7 @@ buttonReceipt = Button(buttonFrame, text='Receipt', font=('arial', 14, 'bold'), 
 buttonReceipt.grid(row=0, column=1)
 
 buttonSave = Button(buttonFrame, text='Save', font=('arial', 14, 'bold'), fg='white', bg='orchid4', bd=3, padx=5
-                    , command=lambda:[save() ,dbpush()])
+                    , command=save)
 buttonSave.grid(row=0, column=2)
 
 buttonReset = Button(buttonFrame, text='Reset', font=('arial', 14, 'bold'), fg='white', bg='orchid4', bd=3, padx=5,
